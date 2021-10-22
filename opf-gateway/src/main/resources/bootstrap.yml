@@ -1,0 +1,9 @@
+server:
+    port: 9030
+spring:
+    application:
+        name: opf-gateway
+    cloud:
+        nacos:
+            config:
+                server-addr: 192.168.31.82:8848

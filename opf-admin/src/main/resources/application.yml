@@ -1,0 +1,35 @@
+server:
+  port: 9021
+#spring:  #数据库的配置采用的配置管理中心（nacos）配置的数据源。所以这里的配置可以注释掉不用
+#  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/opf-dev?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+#    username: ENC(sUeIOGRIrkw5S96iqQjDkQ==)  #加密账号
+#    password: ENC(mtrCYNiD56+izjS9u3uSRmrUMu4krb2Q) #加密密码
+#可以不使用Dahboard。代码写死规则。见代码com/gaoap/opf/admin/controller/SysUserController.java
+## 指定sentinel控制台的地址
+#  cloud:
+#    sentinel:
+#      transport:
+#        dashboard: localhost:8080
+#  # 指定和控制台通信的端口，默认8719
+#        transport:
+#          port: 8719
+#  # 指定心跳周期，默认null
+#          heartbeat-interval-ms: 10000
+jasypt:
+  encryptor:
+    # 加密盐值
+    password: jasypt
+    # 加密算法设置 3.0.0 以后
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+management:
+  endpoints:
+    web:
+      exposure:
+        #exclude: shutdown,threaddump   #此处控制的是不开放哪些端点
+        include: "*" #此处控制的是开放哪些端点，如果需要开启少数端点可以这样配置：health,info。如果开启多个则使用*号开启除了exclude的端点
+    health:
+      show-details: always

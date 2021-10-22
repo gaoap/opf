@@ -1,0 +1,22 @@
+package com.gaoap.opf.oauth.jwt.endpoint;
+
+import com.alibaba.fastjson.JSONObject;
+import com.gaoap.opf.common.core.http.HttpResult;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        String reason = authException.getMessage();
+        response.getWriter().write(JSONObject.toJSONString(HttpResult.error(HttpServletResponse.SC_FORBIDDEN, reason)));
+    }
+}

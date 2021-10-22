@@ -1,0 +1,51 @@
+spring:
+  cloud:
+    inetutils:
+      preferred-networks: 192.168.31 #cloud多网卡配置
+    nacos:
+      discovery:
+        server-addr: 192.168.31.82:8848
+    loadbalancer:
+      retry:
+        enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+    time-zone: GMT+8
+  redis:
+    host: 192.168.31.82
+    port: 6379
+   # password: 123456
+##############end#####################
+####超时配置####
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+  MaxAutoRetries: 1
+  MaxAutoRetriesNextServer: 2
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+exclusion:
+  url:  #list的表达方式
+    - /opf-oauth/login
+    #- /XXXXX
+management:
+  endpoints:
+    web:
+      exposure:
+        #exclude: shutdown,threaddump   #此处控制的是不开放哪些端点
+        include: "*" #此处控制的是开放哪些端点，如果需要开启少数端点可以这样配置：health,info。如果开启多个则使用*号开启除了exclude的端点
+    health:
+      show-details: always

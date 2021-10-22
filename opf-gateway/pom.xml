@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gaoap.opf</groupId>
+        <artifactId>opf</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.gaoap.opf</groupId>
+    <artifactId>opf-gateway</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>opf-gateway</name>
+    <description>opf-gateway</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.gaoap.opf</groupId>
+            <artifactId>opf-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gaoap.opf</groupId>
+            <artifactId>opf-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <layers>
+                        <enabled>true</enabled>
+                    </layers>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.37.0</version>
+                <!--全局配置-->
+                <configuration>
+                    <!--配置远程docker守护进程url-->
+                    <dockerHost>${dockerHost}</dockerHost>
+                    <!--认证配置,用于私有registry认证-->
+                    <!--                    <authConfig>-->
+                    <!--                        <username>admin</username>-->
+                    <!--                        <password>Harbor12345</password>-->
+                    <!--                    </authConfig>-->
+                    <!--镜像相关配置,支持多镜像-->
+                    <images>
+                        <!-- 单个镜像配置 -->
+                        <image>
+                            <!--镜像名(含版本号)-->
+                            <name>registry.cn-beijing.aliyuncs.com/gaoap/${project.name}:${project.version}</name>
+                            <!--registry地址,用于推送,拉取镜像-->
+                            <!--                            <registry>registry.cn-beijing.aliyuncs.com</registry>-->
+                            <!--镜像build相关配置-->
+                            <build>
+                                <!--使用dockerFile文件-->
+                                <dockerFile>${project.basedir}/Dockerfile</dockerFile>
+                            </build>
+                        </image>
+                    </images>
+                    <authConfig>
+                        <username>${auth.username}</username>
+                        <password>${auth.password}</password>
+                    </authConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
