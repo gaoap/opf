@@ -30,7 +30,7 @@ spring:
 
 opf:主要是由以下几部分组成：  
 1.opf-common: 基础和通用类    
-2.opf-admin:  用户、角色、资源维护接口。维护用户、角色、资源之间的关系。资源主要是指URL。  表结构信息见：[数据库结构.sql](src/main/resources/sql/数据库结构.sql)  
+2.opf-admin:  用户、角色、资源维护接口。维护用户、角色、资源之间的关系。资源主要是指URL。  表结构信息见：opf-admin/src/main/resources/sql  
 3.opf-oauth:  认证中心。生成token。并存储token和用户权限资源信息到redis。  
 4.opf-gateway: 网关，对外暴露接口服务，并提供URL访问控制能力。  
 5.opf-monitor: 实质就是启动了一个spring-boot-admin-starter-server服务。  
