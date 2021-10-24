@@ -18,12 +18,15 @@ COPY --from=builder application/application/ ./
 ENV JVM_XMS="256m" \
     JVM_XMX="256m" \
     JVM_OPTS="-Xmx256m -Xms256m" \
-    TZ=Asia/Shanghai
+    TZ=Asia/Shanghai \
+    PARAMS_JAVA="" \
+    PARAMS_SPRING=""
+    #PARAMS给我们要传的参数一个初始值 主要是传递：-Dspring.profiles.active=
 
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 
-ENTRYPOINT java -Xms${JVM_XMS} -Xmx${JVM_XMX} ${JVM_OPTS} -Djava.security.egd=file:/dev/./urandom org.springframework.boot.loader.JarLauncher
+ENTRYPOINT java -Xms${JVM_XMS} -Xmx${JVM_XMX} ${JVM_OPTS} -Djava.security.egd=file:/dev/./urandom ${PARAMS_JAVA} org.springframework.boot.loader.JarLauncher ${PARAMS_SPRING}
 
 
 

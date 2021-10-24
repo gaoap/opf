@@ -1,15 +1,16 @@
 spring:
   application:
     name: opf-admin
+
   cloud:
 #    inetutils:
 #      preferred-networks: 192.168.31 #cloud多网卡配置
     nacos:
       discovery:
-        server-addr: 192.168.31.82:8848
+        server-addr: nacos:8848
       config:
-        server-addr: 192.168.31.82:8848
-        file-extension: yml
+        server-addr: nacos:8848
+        file-extension: yaml
     jackson:
       date-format: yyyy-MM-dd HH:mm:ss
       locale: zh_CN

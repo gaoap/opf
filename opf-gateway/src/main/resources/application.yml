@@ -1,10 +1,10 @@
 spring:
   cloud:
-    inetutils:
-      preferred-networks: 192.168.31 #cloud多网卡配置
+#    inetutils:
+#      preferred-networks: 192.168.31 #cloud多网卡配置
     nacos:
       discovery:
-        server-addr: 192.168.31.82:8848
+        server-addr: nacos:8848
     loadbalancer:
       retry:
         enabled: true
@@ -18,7 +18,7 @@ spring:
     locale: zh_CN
     time-zone: GMT+8
   redis:
-    host: 192.168.31.82
+    host: redis
     port: 6379
    # password: 123456
 ##############end#####################
@@ -40,6 +40,7 @@ hystrix:
 exclusion:
   url:  #list的表达方式
     - /opf-oauth/login
+    - /opf-monitor/**
     #- /XXXXX
 management:
   endpoints:

@@ -15,9 +15,9 @@ cd nacos-docker
 docker-compose -f example/standalone-derby.yaml up  
 启动后通过http://IP:8848/nacos/index.html  账号密码：nacos/nacos  
 创建如下配置：  
-DataID：opf-admin  
+DataID：opf-admin.yaml  
 GROUP：DEFAULT_GROUP  
-配置格式: yml  
+配置格式: yaml  
 内容为：  
 spring:  
     datasource:   

@@ -29,9 +29,9 @@
         <druid-starter.version>1.1.16</druid-starter.version>
         <lombok.version>1.18.22</lombok.version>
         <!--生成docker image相关参数-->
-        <dockerHost>http://127.0.0.1:2375</dockerHost>
-        <auth.username>xxxxx@aliyun.com</auth.username>
-        <auth.password>123456</auth.password>
+        <dockerHost>http://192.168.31.82:2375</dockerHost>
+        <auth.username>hi31827733@aliyun.com</auth.username>
+        <auth.password>Qianbosi2008</auth.password>
         <!--不生成docker image可以不用修改相关参数-->
     </properties>
     <dependencies>

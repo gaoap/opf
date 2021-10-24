@@ -1,0 +1,65 @@
+version: "3"
+services:
+  opf-admin:
+    image: registry.cn-beijing.aliyuncs.com/gaoap/opf-admin:1.0.0-SNAPSHOT
+    #container_name: opf-admin-1
+    expose:
+      - 9021
+    deploy:
+      replicas: 2
+    networks:
+      - gaoap
+#    depends_on:
+#      - nacos
+#      - redis
+    environment:
+      - PARAMS_JAVA=-Dspring.profiles.active=dev
+    restart: on-failure
+  opf-oauth:
+    image: registry.cn-beijing.aliyuncs.com/gaoap/opf-oauth:1.0.0-SNAPSHOT
+    #container_name: opf-oauth-1
+    expose:
+      - 9060
+    networks:
+      - gaoap
+#    depends_on:
+#      - nacos
+#      - redis
+    environment:
+      - PARAMS_JAVA=-Dspring.profiles.active=dev
+    restart: on-failure
+  opf-gateway:
+    image: registry.cn-beijing.aliyuncs.com/gaoap/opf-gateway:1.0.0-SNAPSHOT
+    #container_name: opf-gateway-1
+    expose:
+      - 9030
+    ports:
+      - 9030:9030
+    networks:
+      - gaoap
+#    depends_on:
+#      - nacos
+#      - redis
+    environment:
+      - PARAMS_JAVA=-Dspring.profiles.active=dev
+    restart: on-failure
+  opf-monitor:
+    image: registry.cn-beijing.aliyuncs.com/gaoap/opf-monitor:1.0.0-SNAPSHOT
+    #container_name: opf-monitor-1
+    expose:
+      - 9050
+    ports:
+      - 9050:9050
+    networks:
+      - gaoap
+#    depends_on:
+#      - nacos
+#      - redis
+    environment:
+      - PARAMS_JAVA=-Dspring.profiles.active=dev
+    restart: on-failure
+networks:
+  gaoap:
+    driver: bridge
+
+#  docker login --username=hi31827733@aliyun.com registry.cn-beijing.aliyuncs.com
