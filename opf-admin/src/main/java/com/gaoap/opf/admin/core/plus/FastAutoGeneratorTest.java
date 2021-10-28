@@ -33,7 +33,7 @@ public class FastAutoGeneratorTest {
      * 数据源配置
      */
     private static final DataSourceConfig.Builder DATA_SOURCE_CONFIG = new DataSourceConfig
-            .Builder("jdbc:mysql://gaoapmysql.mysql.rds.aliyuncs.com:3306/opf-dev?useUnicode=true&characterEncoding=utf8", "opf", "Qianbosi2008");
+            .Builder("jdbc:mysql://localhost:3306/opf-dev?useUnicode=true&characterEncoding=utf8", "test", "test");
 
     /**
      * 执行 run
@@ -46,7 +46,7 @@ public class FastAutoGeneratorTest {
                 // 包配置com.gaoap.platform.one.admin
                 .packageConfig(builder -> builder.parent("com.gaoap.opf").moduleName("admin")) // 设置父包模块名))
                 // 策略配置
-                .strategyConfig(builder -> builder.likeTable(new LikeTable("sys")))
+                .strategyConfig(builder -> builder.likeTable(new LikeTable("sys_sub")))
                 /*
                     模板引擎配置，默认 Velocity 可选模板引擎 Beetl 或 Freemarker
                    .templateEngine(new BeetlTemplateEngine())

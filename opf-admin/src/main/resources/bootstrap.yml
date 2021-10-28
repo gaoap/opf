@@ -1,15 +1,23 @@
 spring:
   application:
     name: opf-admin
+  zipkin:
+    base-url: http://192.168.31.82:9411/
+    sender:
+      type: web #请求方式,默认以http的方式向zipkin server发送追踪数据，其他取值如 kafka、rabbit
+  sleuth:
+    sampler:
+      probability: 1.0 #采样的百分比,默认为0.1，即10%
+      #过于频繁的采样会影响系统性能，实际使用这里需要配置一个合适的值。
 
   cloud:
 #    inetutils:
 #      preferred-networks: 192.168.31 #cloud多网卡配置
     nacos:
       discovery:
-        server-addr: nacos:8848
+        server-addr: 192.168.31.82:8848
       config:
-        server-addr: nacos:8848
+        server-addr: 192.168.31.82:8848
         file-extension: yaml
     jackson:
       date-format: yyyy-MM-dd HH:mm:ss

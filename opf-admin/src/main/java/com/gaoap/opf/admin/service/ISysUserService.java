@@ -2,6 +2,7 @@ package com.gaoap.opf.admin.service;
 
 import com.gaoap.opf.admin.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gaoap.opf.admin.security.common.AdminUserDetails;
 
 /**
  * <p>
@@ -12,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-10-18
  */
 public interface ISysUserService extends IService<SysUser> {
-
+    public AdminUserDetails authorizationInformationByName(String username);
 }

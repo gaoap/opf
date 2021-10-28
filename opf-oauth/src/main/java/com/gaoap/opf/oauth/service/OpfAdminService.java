@@ -4,6 +4,7 @@ package com.gaoap.opf.oauth.service;
 import com.gaoap.opf.common.core.http.HttpResult;
 import com.gaoap.opf.common.core.vo.SysResource;
 import com.gaoap.opf.common.core.vo.SysRole;
+import com.gaoap.opf.common.core.vo.SysSubsystem;
 import com.gaoap.opf.common.core.vo.SysUser;
 import com.gaoap.opf.oauth.service.impl.OpfAdminServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,12 +17,15 @@ import java.util.List;
 @FeignClient(name = "opf-admin", fallback = OpfAdminServiceFallbackFactory.class)
 @Component("opfAdminService")
 public interface OpfAdminService {
-    @GetMapping("admin/sysUser/findByUsername/{username}")
+    @GetMapping("/admin/sysUser/findByUsername/{username}")
     HttpResult<SysUser> findByUsername(@PathVariable("username") String username);
 
-    @GetMapping("admin/sysRole/getRoleByUserId/{userId}")
+    @GetMapping("/admin/sysRole/getRoleByUserId/{userId}")
     HttpResult<List<SysRole>> getRoleByUserId(@PathVariable("userId") Long userId);
 
-    @GetMapping("admin/sysResource/getRoleResource/{roleId}")
+    @GetMapping("/admin/sysResource/getRoleResource/{roleId}")
     HttpResult<List<SysResource>> getResource(@PathVariable("roleId") Long roleId);
+
+    @GetMapping("/admin/sysSubsystem/subsystem")
+    HttpResult<List<SysSubsystem>> getSubsystem();
 }

@@ -1,7 +1,22 @@
 spring:
-    application:
-        name: opf-monitor
-    cloud:
-        exclusion:
-            config:
-                server-addr: nacos:8848
+  application:
+    name: opf-monitor
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+      config:
+        server-addr: nacos:8848
+        file-extension: yaml
+    jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      locale: zh_CN
+      time-zone: GMT+8
+  zipkin:
+    base-url: http://zipkin:9411/
+    sender:
+      type: web #请求方式,默认以http的方式向zipkin server发送追踪数据，其他取值如 kafka、rabbit
+  sleuth:
+    sampler:
+      probability: 1.0 #采样的百分比,默认为0.1，即10%
+      #过于频繁的采样会影响系统性能，实际使用这里需要配置一个合适的值。

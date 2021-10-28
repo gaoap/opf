@@ -17,6 +17,28 @@ public class HttpResult<T> {
         return error(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg);
     }
 
+    /**
+     * 未登录返回结果
+     */
+    public static <T> HttpResult<T> unauthorized(T data) {
+        HttpResult r = new HttpResult();
+        r.setCode(ResultCode.UNAUTHORIZED.getCode());
+        r.setMsg(ResultCode.UNAUTHORIZED.getMessage());
+        r.data = data;
+        return r;
+    }
+
+    /**
+     * 未授权返回结果
+     */
+    public static <T> HttpResult<T> forbidden(T data) {
+        HttpResult r = new HttpResult();
+        r.setCode(ResultCode.FORBIDDEN.getCode());
+        r.setMsg(ResultCode.FORBIDDEN.getMessage());
+        r.data = data;
+        return r;
+    }
+
     public static HttpResult error(int code, String msg) {
         HttpResult r = new HttpResult();
         r.setCode(code);
@@ -30,7 +52,7 @@ public class HttpResult<T> {
         return r;
     }
 
-    public static HttpResult ok(Object data) {
+    public static <T> HttpResult<T> ok(T data) {
         HttpResult r = new HttpResult();
         r.setData(data);
         return r;

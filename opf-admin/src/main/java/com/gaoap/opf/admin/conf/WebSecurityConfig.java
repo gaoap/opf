@@ -7,13 +7,13 @@ package com.gaoap.opf.admin.conf;
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 //import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-/**
- * Spring Security Config
- *
- * @author Louis
- * @date Nov 20, 2018
- */
+//
+///**
+// * Spring Security Config
+// *
+// * @author Louis
+// * @date Nov 20, 2018
+// */
 //@Configuration
 //@EnableWebSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -40,7 +40,7 @@ package com.gaoap.opf.admin.conf;
 //                .antMatchers("/**/swagger-ui/**").permitAll()
 //                .antMatchers("/**/swagger-resources/**").permitAll()
 //                .antMatchers("/**/v3/**").permitAll()
-//                .anyRequest().permitAll();
+//                .anyRequest().authenticated();
 //
 //
 //    }

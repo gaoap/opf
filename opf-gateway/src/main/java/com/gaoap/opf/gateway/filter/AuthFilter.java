@@ -4,18 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.common.utils.MD5Utils;
 import com.gaoap.opf.common.core.http.HttpResult;
-import com.gaoap.opf.common.core.jwt.JWTConstants;
+import com.gaoap.opf.common.core.jwt.JwtTokenUtil;
 import com.gaoap.opf.common.core.vo.Authority;
-import com.gaoap.opf.common.core.vo.SysUser;
-import com.gaoap.opf.common.core.vo.UserVo;
+
 import com.gaoap.opf.gateway.config.ExclusionUrl;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.SignedJWT;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -30,17 +27,20 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 
 @Component
 @Slf4j
 public class AuthFilter implements GlobalFilter, Ordered {
-
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     @Autowired
     private ExclusionUrl exclusionUrl;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -51,7 +51,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
-        String headerToken = request.getHeaders().getFirst(JWTConstants.TOKEN_HEADER);
+        String headerToken = request.getHeaders().getFirst(tokenHeader);
         log.info("headerToken:{}", headerToken);
         //1、只要带上了token， 就需要判断Token是否有效
         if (!StringUtils.isEmpty(headerToken) && !verifierToken(headerToken)) {
@@ -96,62 +96,53 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     private boolean verifierToken(String headerToken) {
-        try {
-            SignedJWT jwt = getSignedJWT(headerToken);
-            JWSVerifier verifier = new MACVerifier(JWTConstants.SECRET);
-            //校验是否有效
-            if (!jwt.verify(verifier)) {
-                log.error("token不合法，检测不过关");
-                return false;
-            }
-            //校验超时
-            Date expirationTime = jwt.getJWTClaimsSet().getExpirationTime();
-            if (new Date().after(expirationTime)) {
-                log.error("token已经过期");
-                return false;
-            }
-            //获取载体中的数据
-            return true;
-        } catch (ParseException | JOSEException e) {
-            log.error("token校验出错", e);
+        if (StringUtils.isEmpty(headerToken)) {
+            return false;
         }
-        return false;
+        String token = headerToken.replace(tokenHead, "");
+        String username = jwtTokenUtil.getUserNameFromToken(token);
+        //校验是否有效
+        if (username == null) {
+            log.error("token不合法，检测不过关");
+            return false;
+        }
+        //校验超时
+
+        if (!jwtTokenUtil.validateToken(token, username)) {
+            log.error("token已经过期");
+            return false;
+        }
+        //获取载体中的数据
+        return true;
+
     }
 
     private boolean hasPermission(String headerToken, String path) {
-        try {
-            if (StringUtils.isEmpty(headerToken)) {
-                return false;
-            }
-            SignedJWT jwt = getSignedJWT(headerToken);
-            Object payload = jwt.getJWTClaimsSet().getClaim("payload");
-            UserVo userVo = JSONObject.parseObject(payload.toString(), UserVo.class);
-            Long userId = userVo.getUserId();
-            log.info("---userId：" + userId);
-            //生成Key， 把权限放入到redis中
-            String keyPrefix = "JWT" + userId + ":";
-            String token = headerToken.replace(JWTConstants.TOKEN_PREFIX, "");
-            String keySuffix = MD5Utils.encodeHexString(token.getBytes());
-            String key = keyPrefix + keySuffix;
-            String authKey = key + ":Authorities";
-            log.info("---authKey：" + authKey);
-            String authStr = redisTemplate.opsForValue().get(authKey);
-            if (StringUtils.isEmpty(authStr)) {
-                return false;
-            }
-            List<Authority> authorities = JSON.parseArray(authStr, Authority.class);
-            log.info("-----------------authorities.size：" + authorities.size());
-            authorities.forEach(x -> System.out.println(x.getAuthority()));
-            return authorities.stream().anyMatch(authority -> antPathMatcher.match(authority.getAuthority(), path));
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+
+        if (StringUtils.isEmpty(headerToken)) {
+            return false;
         }
-        return false;
+        String token = headerToken.replace(tokenHead, "");
+        String username = jwtTokenUtil.getUserNameFromToken(token);
+        log.info("---username：" + username);
+        //生成Key， 把权限放入到redis中
+        String keyPrefix = "JWT" + username + ":";
+
+        String keySuffix = MD5Utils.encodeHexString(token.trim().getBytes());
+        String key = keyPrefix + keySuffix;
+        String authKey = key + ":Authorities";
+        log.info("---authKey：" + authKey);
+        String authStr = redisTemplate.opsForValue().get(authKey);
+        if (StringUtils.isEmpty(authStr)) {
+            return false;
+        }
+        List<Authority> authorities = JSON.parseArray(authStr, Authority.class);
+        log.info("-----------------authorities.size：" + authorities.size());
+        authorities.forEach(x -> System.out.println(x.getAuthority()));
+        return authorities.stream().anyMatch(authority -> antPathMatcher.match(authority.getAuthority(), path));
+
     }
 
-    private SignedJWT getSignedJWT(String headerToken) throws ParseException {
-        String token = headerToken.replace(JWTConstants.TOKEN_PREFIX, "");
-        log.info("token is {}", token);
-        return SignedJWT.parse(token);
-    }
+
 }

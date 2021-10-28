@@ -2,15 +2,15 @@ server:
   port: 9060
 spring:
   redis:
-    host: redis
+    host: 192.168.31.82
     port: 6379
     ####password: 123456
   cloud:
-#    inetutils:
-#      preferred-networks: 192.168.31 #cloud多网卡配置
+    #    inetutils:
+    #      preferred-networks: 192.168.31 #cloud多网卡配置
     nacos:
       discovery:
-        server-addr: nacos:8848
+        server-addr: 192.168.31.82:8848
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     locale: zh_CN
@@ -31,3 +31,8 @@ management:
 feign:
   sentinel:
     enabled: true # 添加feign对sentinel的支持
+jwt:
+  tokenHeader: Authorization
+  tokenHead: Bearer
+  secret: T1BGX0FETUlOX0pXVF9zYWZldHlfY2VydGlmaWNhdGlvbk9QRl9BRE1JTl9KV1Rfc2FmZXR5X2NlcnRpZmljYXRpb24=
+  expiration: 7200000

@@ -4,7 +4,7 @@ spring:
 #      preferred-networks: 192.168.31 #cloud多网卡配置
     nacos:
       discovery:
-        server-addr: nacos:8848
+        server-addr: 192.168.31.82:8848
     loadbalancer:
       retry:
         enabled: true
@@ -18,7 +18,7 @@ spring:
     locale: zh_CN
     time-zone: GMT+8
   redis:
-    host: redis
+    host: 192.168.31.82
     port: 6379
    # password: 123456
 ##############end#####################
@@ -50,3 +50,8 @@ management:
         include: "*" #此处控制的是开放哪些端点，如果需要开启少数端点可以这样配置：health,info。如果开启多个则使用*号开启除了exclude的端点
     health:
       show-details: always
+jwt:
+  tokenHeader: Authorization
+  tokenHead: Bearer
+  secret: T1BGX0FETUlOX0pXVF9zYWZldHlfY2VydGlmaWNhdGlvbk9QRl9BRE1JTl9KV1Rfc2FmZXR5X2NlcnRpZmljYXRpb24=
+  expiration: 7200000

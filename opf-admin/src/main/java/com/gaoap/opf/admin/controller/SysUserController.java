@@ -15,11 +15,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/sysUser")
 @Slf4j
+//@PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
 public class SysUserController {
     /**
      * 服务对象
@@ -58,6 +61,7 @@ public class SysUserController {
      */
     @ApiOperation("通过主键查询单条数据")
     @GetMapping("{id}")
+    @RolesAllowed({"ADMIN"})
     public HttpResult selectOne(@PathVariable Serializable id) {
         return HttpResult.ok(sysUserService.getById(id));
     }

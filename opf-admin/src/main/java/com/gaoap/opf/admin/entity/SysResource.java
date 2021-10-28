@@ -3,6 +3,7 @@ package com.gaoap.opf.admin.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,7 +23,7 @@ public class SysResource implements Serializable {
     /**
      * 编号
      */
-      @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -89,6 +90,12 @@ public class SysResource implements Serializable {
      * 状态  0：未启用   1：正常
      */
     private Integer status;
+
+
+    /**
+     * 系统ID
+     */
+    private String subId;
 
 
     public Long getId() {
@@ -203,23 +210,32 @@ public class SysResource implements Serializable {
         this.status = status;
     }
 
+    public String getSubId() {
+        return subId;
+    }
+
+    public void setSubId(String subId) {
+        this.subId = subId;
+    }
+
     @Override
     public String toString() {
         return "SysResource{" +
-        "id=" + id +
-        ", name=" + name +
-        ", parentId=" + parentId +
-        ", url=" + url +
-        ", perms=" + perms +
-        ", type=" + type +
-        ", icon=" + icon +
-        ", orderNum=" + orderNum +
-        ", createBy=" + createBy +
-        ", createTime=" + createTime +
-        ", lastUpdateBy=" + lastUpdateBy +
-        ", lastUpdateTime=" + lastUpdateTime +
-        ", delFlag=" + delFlag +
-        ", status=" + status +
-        "}";
+                "id=" + id +
+                ", name=" + name +
+                ", parentId=" + parentId +
+                ", url=" + url +
+                ", perms=" + perms +
+                ", type=" + type +
+                ", icon=" + icon +
+                ", orderNum=" + orderNum +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", lastUpdateBy=" + lastUpdateBy +
+                ", lastUpdateTime=" + lastUpdateTime +
+                ", delFlag=" + delFlag +
+                ", status=" + status +
+                ", subId=" + subId +
+                "}";
     }
 }

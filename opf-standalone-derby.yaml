@@ -39,6 +39,14 @@ services:
     image: redis:latest
     expose:
       - 6379
+    ports:
+      - 6379:6379
+    networks:
+      - gaoap
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
     networks:
       - gaoap
 networks:

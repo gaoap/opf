@@ -34,3 +34,18 @@ management:
     health:
       show-details: always
 
+jwt:
+  tokenHeader: Authorization
+  tokenHead: Bearer
+  secret: T1BGX0FETUlOX0pXVF9zYWZldHlfY2VydGlmaWNhdGlvbk9QRl9BRE1JTl9KV1Rfc2FmZXR5X2NlcnRpZmljYXRpb24=
+  expiration: 7200000
+opf-admin:
+  security:
+    dynamic: true
+  ignored:
+    urls:
+      - /admin/sysUser/findByUsername/**
+      - /admin/sysRole/getRoleByUserId/**
+      - /admin/sysResource/getRoleResource/**
+      - /admin/sysSubsystem/subsystem
+

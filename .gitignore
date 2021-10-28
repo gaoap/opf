@@ -2,3 +2,6 @@
 /opf.iml
 /readeMe.md
 /src/
+/opf-gateway/error.log
+/opf-gateway/log.log
+/opf-monitor/error.log

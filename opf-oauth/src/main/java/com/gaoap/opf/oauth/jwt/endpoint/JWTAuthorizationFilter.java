@@ -2,14 +2,9 @@ package com.gaoap.opf.oauth.jwt.endpoint;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gaoap.opf.common.core.http.HttpResult;
-import com.gaoap.opf.common.core.jwt.JWTConstants;
-import com.gaoap.opf.common.core.vo.UserVo;
-import com.gaoap.opf.oauth.entity.AuthUser;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.SignedJWT;
+import com.gaoap.opf.common.core.jwt.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -19,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -27,25 +21,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
 
 /**
  * <p>鉴权</p>
  */
 @Slf4j
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+    private JwtTokenUtil jwtTokenUtil;
+    private String token_header;
+    private String tokenHead;
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, String token_header, String tokenHead) {
         super(authenticationManager);
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.token_header = token_header;
+        this.tokenHead = tokenHead;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        String token = request.getHeader(JWTConstants.TOKEN_HEADER);
+        String token = request.getHeader(token_header);
         log.info("doFilterInternal: 进入。。。。。 ");
-        if (StringUtils.isEmpty(token) || !token.startsWith(JWTConstants.TOKEN_PREFIX)) {
+        if (StringUtils.isEmpty(token) || !token.startsWith(tokenHead)) {
             chain.doFilter(request, response);
             return;
         }
@@ -77,31 +75,25 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     // 这里从token中获取用户信息并新建一个token
-    private AbstractAuthenticationToken getAuthentication(String tokenHeader) throws ParseException, JOSEException {
-        String token = tokenHeader.replace(JWTConstants.TOKEN_PREFIX, "");
-        SignedJWT jwt = SignedJWT.parse(token);
-        JWSVerifier verifier = new MACVerifier(JWTConstants.SECRET);
+    private AbstractAuthenticationToken getAuthentication(String tokenHeader) throws ParseException {
+        String token = tokenHeader.replace(tokenHead, "");
+        String userName = jwtTokenUtil.getUserNameFromToken(token);
         //校验是否有效
-        if (!jwt.verify(verifier)) {
+        if (userName == null) {
             log.info("token:无效");
             throw new AccountExpiredException("Token 无效");
         }
 
         //校验超时
-        Date expirationTime = jwt.getJWTClaimsSet().getExpirationTime();
-        if (new Date().after(expirationTime)) {
+        boolean validat = jwtTokenUtil.validateToken(token, userName);
+        if (!validat) {
             log.info("token:过期");
             throw new AccountExpiredException("Token 已过期");
         }
-
         //获取载体中的数据
-        Object account = jwt.getJWTClaimsSet().getClaim("payload");
-        if (account != null) {
-            log.info("account："+account.toString());
-            UserVo userVo = JSONObject.parseObject(account.toString(), UserVo.class);
-            log.info("userVo："+userVo.toString());
-            return new UsernamePasswordAuthenticationToken(userVo.getUsername(), userVo.getPassword(), null);
-        }
-        return null;
+        log.info("account：" + userName);
+        return new UsernamePasswordAuthenticationToken(userName, "", null);
+
+
     }
 }

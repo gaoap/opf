@@ -1,9 +1,18 @@
 server:
-    port: 9030
+  port: 9030
 spring:
-    application:
-        name: opf-gateway
-    cloud:
-        nacos:
-            config:
-                server-addr: nacos:8848
+  zipkin:
+    base-url: http://192.168.31.82:9411/
+    sender:
+      type: web #请求方式,默认以http的方式向zipkin server发送追踪数据，其他取值如 kafka、rabbit
+  sleuth:
+    sampler:
+      probability: 1.0 #采样的百分比,默认为0.1，即10%
+      #过于频繁的采样会影响系统性能，实际使用这里需要配置一个合适的值。
+  application:
+    name: opf-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.31.82:8848
+        file-extension: yaml

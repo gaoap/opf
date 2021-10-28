@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class UsernameAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    /**
-     * 过期时间2小时
-     */
-    private static final long EXPIRE_TIME = 1000 * 60 * 60 * 2;
 
     private AuthenticationManager authenticationManager;
 

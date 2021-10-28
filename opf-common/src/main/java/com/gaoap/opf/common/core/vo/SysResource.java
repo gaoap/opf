@@ -77,6 +77,10 @@ public class SysResource implements Serializable {
      * 状态  0：未启用   1：正常
      */
     private Integer status;
+    /**
+     * 系统编号
+     */
+    private String subId;
 
 
 

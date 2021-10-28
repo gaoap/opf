@@ -1,6 +1,7 @@
 package com.gaoap.opf.oauth.config;
 
 
+import com.gaoap.opf.common.core.jwt.JwtTokenUtil;
 import com.gaoap.opf.oauth.jwt.endpoint.JWTAuthenticationEntryPoint;
 import com.gaoap.opf.oauth.jwt.endpoint.JWTAuthorizationFilter;
 import com.gaoap.opf.oauth.jwt.handler.JWTAuthenticationFailureHandler;
@@ -9,6 +10,7 @@ import com.gaoap.opf.oauth.jwt.handler.JWTAuthenticationSuccessHandler;
 import com.gaoap.opf.oauth.jwt.password.UsernameAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,7 +31,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     @Autowired
     @Qualifier("userDetailsServiceImpl")
     private UserDetailsService userDetailsService;
@@ -39,6 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     @Qualifier("jwtAuthenticationFailureHandler")
     private JWTAuthenticationFailureHandler failureHandler;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager(),  jwtTokenUtil,  tokenHeader,  tokenHead), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint());
