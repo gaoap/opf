@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gaoap.opf.upm.mapper.OpfUpmResourceMapper">
+    <!-- id的标识要和OpfUpmResourceMapper 中的方法名对应-->
+    <!-- resultType是表示查询结果返回映射的实体类，这里是OpfUpmResource-->
+    <!-- #{userId} 代表要传递的参数，变量名称为：userId -->
+    <select id="getResourceList" resultType="com.gaoap.opf.upm.entity.OpfUpmResource">
+        SELECT ur.*
+        FROM opf_upm_user_role_relation ar
+                 LEFT JOIN opf_upm_role r ON ar.role_id = r.id
+                 LEFT JOIN opf_upm_role_resource_relation rrr ON r.id = rrr.role_id
+                 LEFT JOIN opf_upm_resource ur ON ur.id = rrr.resource_id
+        WHERE ar.user_id = #{userId}
+          AND ur.id IS NOT NULL
+        GROUP by ur.id
+    </select>
+</mapper>

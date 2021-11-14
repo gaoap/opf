@@ -1,0 +1,45 @@
+server:
+  #程序启动服务的端口号
+  port: 9021
+spring: #数据库的配置,springboot默认引入com.zaxxer.hikari.HikariDataSource。不需要额外添加依赖
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/opf_upm?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    #ENC()是jasypt的固定用法。（）中存放的是加密后的密文。应用时jasypt会自动解密。
+    #需要在@EnableEncryptableProperties 配置在启动入口处，即可。例如类：OpfUpmApplication
+    #加密账号，需要引入jasypt依赖.密码解密加密见类：JasyptUtilTest
+    username: ENC(JwPIGDNebkmmw/MfKRgHwg==)
+    #加密密码，需要引入jasypt依赖。密码解密加密见类：JasyptUtilTest
+    password: ENC(yegMC7FrDsK/HikOv2fYM+NE6mVGEBV2)
+jasypt: ##需要引入以来jasypt-spring-boot-starter
+  encryptor:
+    # 加密盐值
+    ## 建议部署的时候 盐 不要放到配置文件，可以用启动参数 -Djasypt.encryptor.password=jasypt 来替代。
+    password: jasypt
+    # 加密算法设置 3.0.0 以后
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+opf:
+  upm:
+    jwt:
+      #存储token的key
+      tokenHeader: Authorization
+      #token 前缀
+      tokenHead: Bearer
+      #加密密钥
+      secret: T1BGX0FETUlOX0pXVF9zYWZldHlfY2VydGlmaWNhdGlvbk9QRl9BRE1JTl9KV1Rfc2FmZXR5X2NlcnRpZmljYXRpb24=
+      #超时时间，单位ms
+      expiration: 7200000
+    security:
+      #是否启动动态权限验证true/false
+      dynamic: false
+      #白名单配置，规则为正则匹配。存储对象为list格式
+      ignored:
+        urls:
+          - /upm/opfUpmUser/login
+          - /swagger-ui/**
+          - /**/swagger-resources/**"
+          - /**/v3/**
+mybatis-plus:
+  mapper-locations: classpath:**/*Mapper.xml
